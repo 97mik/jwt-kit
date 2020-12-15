@@ -1,12 +1,18 @@
 import CJWTKitBoringSSL
 import struct Foundation.Data
 
-internal struct RSASigner: JWTAlgorithm, OpenSSLSigner {
-    let key: RSAKey
-    let algorithm: OpaquePointer
-    let name: String
-
-    func sign<Plaintext>(_ plaintext: Plaintext) throws -> [UInt8]
+public struct RSASigner: JWTAlgorithm, OpenSSLSigner {
+    public let key: RSAKey
+    public let algorithm: OpaquePointer
+    public let name: String
+    
+    public init(key: RSAKey, algorithm: OpaquePointer, name: String) {
+        self.key = key
+        self.algorithm = algorithm
+        self.name = name
+    }
+    
+    public func sign<Plaintext>(_ plaintext: Plaintext) throws -> [UInt8]
         where Plaintext: DataProtocol
     {
         guard case .private = self.key.type else {
@@ -33,7 +39,7 @@ internal struct RSASigner: JWTAlgorithm, OpenSSLSigner {
         return .init(signature[0..<numericCast(signatureLength)])
     }
 
-    func verify<Signature, Plaintext>(
+    public func verify<Signature, Plaintext>(
         _ signature: Signature,
         signs plaintext: Plaintext
     ) throws -> Bool
